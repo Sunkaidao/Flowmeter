@@ -521,7 +521,7 @@ void Copter::three_hz_loop()
 
 
 #if PROJECTGKXN == ENABLED 
-	Log_Write_Sprayer(sprayer, wp_distance, flowmeter.get_warning(), flowmeter.get_packet_cnt(),flowmeter.get_volume(),flowmeter.get_high(), newbroadcast.get_view_flight_area());
+	Log_Write_Sprayer(sprayer, wp_distance, flowmeter.get_warning(), flowmeter.get_packet_cnt(),flowmeter.get_volume(),flowmeter.get_time(), newbroadcast.get_view_flight_area());
 #else
 	Log_Write_Sprayer(sprayer, wp_distance, 1, 0);
 #endif
@@ -538,7 +538,8 @@ void Copter::three_hz_loop()
 
 #if PROJECTGKXN == ENABLED
 	flowmeter.update(serial_manager);
-
+	uint8_t spray_runing=sprayer.get_running();
+	flowmeter.get_sprayer_state(spray_runing);
 
 	/*	to do zhangyong 20160920
 	//	printf("%d, %d, %d, %d\n", !ap.usb_connected, \

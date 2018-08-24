@@ -326,6 +326,7 @@ void Copter::send_payload_status(mavlink_channel_t chan, enum pld_status para_pl
 				payload_status[3] = (flowmeter.get_volume()>>8);
 				payload_status[4] = (flowmeter.get_high()&0x00ff);
 				payload_status[5] = (flowmeter.get_high()>>8);
+				payload_status[6] = flowmeter.get_time();
 
 				mavlink_msg_payload_status_send(chan, \
 												AP_HAL::millis(), \

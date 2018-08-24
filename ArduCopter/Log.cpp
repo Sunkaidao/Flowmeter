@@ -63,9 +63,9 @@ void Copter::Log_Write_AutoTuneDetails(float angle_cd, float rate_cds)
 
 #if SPRAYER == ENABLED
 //	added by ZhangYong 20170405
-void Copter::Log_Write_Sprayer(AC_Sprayer &para_sprayer, uint32_t wp_dist, uint8_t para_fm_warn, uint8_t para_pk_cnt, uint16_t para_fm_vol, uint16_t para_fm_high, uint16_t view_flight_area)
+void Copter::Log_Write_Sprayer(AC_Sprayer &para_sprayer, uint32_t wp_dist, uint8_t para_fm_warn, uint8_t para_pk_cnt, uint16_t para_fm_vol, uint8_t para_fm_time, uint16_t view_flight_area)
 {
-	DataFlash.Log_Write_Sprayer(para_sprayer, wp_dist, para_fm_warn, para_pk_cnt, para_fm_vol, para_fm_high, view_flight_area);
+	DataFlash.Log_Write_Sprayer(para_sprayer, wp_dist, para_fm_warn, para_pk_cnt, para_fm_vol, para_fm_time, view_flight_area);
 }
 
 

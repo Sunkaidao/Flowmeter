@@ -42,6 +42,10 @@ public:
 	uint8_t get_packet_cnt();
 
 	bool exhausted();
+//added by xusiming in 20180821 and used for counting down
+	void get_sprayer_state(uint8_t state);
+	uint8_t get_time();
+//added end 
 
 	static const struct AP_Param::GroupInfo var_info[];
 
@@ -74,6 +78,7 @@ private:
 		uint8_t flag;
 		uint8_t	mode;
 		uint8_t packet_cnt;
+		int8_t time;
 	}_Flo_data;
 
 
@@ -85,7 +90,7 @@ private:
 		uint8_t Time_Parity_error;
 	}_num_error;
 	uint8_t state_tim;
-
+	uint8_t sprayer_state;
 	
 };
 
