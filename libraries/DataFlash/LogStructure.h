@@ -663,6 +663,7 @@ struct PACKED log_RFND {
 	uint16_t notarget1;
 	uint16_t unvaildnum1;
 	uint8_t condition1;
+	uint8_t valid1;
 };
 
 #if CHARGINGSTATION == ENABLED
@@ -1887,7 +1888,7 @@ Format characters in the format string for binary log messages
     { LOG_MODE_MSG, sizeof(log_Mode), \
       "MODE", "QMBB",         "TimeUS,Mode,ModeNum,Rsn" }, \
     { LOG_RFND_MSG, sizeof(log_RFND), \
-      "RFND", "QCBCBCBCCCB", "TimeUS,Dt1,Ot1,Dt2,Ot2,Dt3,Ot3,Err1,NT1,unv1,Cod1" }, \
+      "RFND", "QCBCBCBCCCBB", "TimeUS,Dt1,Ot1,Dt2,Ot2,Dt3,Ot3,Err1,NT1,unv1,Cod1,V1" }, \
     { LOG_DF_MAV_STATS, sizeof(log_DF_MAV_Stats), \
       "DMS", "IIIIIBBBBBBBBBB",         "TimeMS,N,Dp,RT,RS,Er,Fa,Fmn,Fmx,Pa,Pmn,Pmx,Sa,Smn,Smx" }, \
     { LOG_BEACON_MSG, sizeof(log_Beacon), \

@@ -25,8 +25,10 @@ bool AP_RangeFinder_Radar_GKXN::get_reading(uint16_t &reading_cm)
 	if (uart == nullptr) {
         return false;
 		}
-	int16_t nbytes = uart->available();
 	bool valid=false;
+/*modifed by xusiming in 20180828 
+	int16_t nbytes = uart->available();
+	
 	while (nbytes-- > 0)
 	{
 	//depend on 20180713 email of gkxn
@@ -117,8 +119,18 @@ bool AP_RangeFinder_Radar_GKXN::get_reading(uint16_t &reading_cm)
 			break;
 			}
 		}
+		
+*///modifed end
+//added by xusiming in 201808028 and used for gkxn radar 
+		if(gkxn_down_warning==false)
+		{
+		reading_cm=gkxn_down_data;
+		valid=true;
+		}
 		return valid;
 	}	
+//modifed by xusiming in 20180828 
+/*
 int AP_RangeFinder_Radar_GKXN::Getdata()
 {
 	if(address_code!=0x0C)
@@ -135,7 +147,8 @@ int AP_RangeFinder_Radar_GKXN::Getdata()
 		}
 	return Right_data;
 }
-
+*/
+//modifed end
 
 void AP_RangeFinder_Radar_GKXN::update(void)
 {

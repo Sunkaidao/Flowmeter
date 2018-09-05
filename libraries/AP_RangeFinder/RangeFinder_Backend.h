@@ -89,7 +89,12 @@ public:
 	uint16_t RangeFinder_no_target_count() const {return (state.RangeFinder_no_target_count*100);}
 	uint16_t RangeFinder_unvalid_num() const{return (state.RangeFinder_unvalid_num*100);}
 	uint8_t RangeFinder_message_condition() const{return (state.RangeFinder_message_condition);}
-		//added by xusiming 20180510
+	//added by xusiming in 20180827 and used for gkxn  proximity radar
+	void get_gxkn_down_data(uint16_t downdata,bool warning);
+	uint16_t gkxn_down_data;
+	bool gkxn_down_warning;
+	//added end
+	//added by xusiming 20180510
 //    uint8_t RangeFinder_error=0;
 //	uint8_t RangeFinder_no_target=0;
 //	uint8_t RangeFinder_valid=0;
