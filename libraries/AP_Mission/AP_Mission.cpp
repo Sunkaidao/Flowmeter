@@ -254,7 +254,6 @@ void AP_Mission::update()
         //baiyang added in 20180801
         //Switch out the AUTO, record the breakpoint, cut into AUTO again, clear the breakpoint record
         //_flags.do_cmd_change_airline == true,switch out the AUTO, record the breakpoint, no new route generated,and cut into the AUTO again.
-        Mission_Command cmd;
         if (_breakpoint.index != 0 && \
 			_breakpoint.index < _cmd_total && \
 			_flags.do_cmd_change_airline)
@@ -1831,7 +1830,6 @@ bool AP_Mission::jump_to_landing_sequence(void)
 bool AP_Mission::record_breakpoint()
 {
     struct Location current_loc;
-    Mission_Command cmd;
 	
     if (!_ahrs.get_position(current_loc) || \
 		_nav_cmd.id == MAV_CMD_NAV_TAKEOFF || \
@@ -1870,6 +1868,8 @@ int8_t AP_Mission::regenerate_airline()
 {
     Mission_Command cmd;
     Mission_Command cmd_b;
+    Mission_Command cmd_cam_tigg_dist;
+    memset( & cmd_cam_tigg_dist, 0, sizeof(cmd_cam_tigg_dist));
     int8_t num_insert = 1;
     insert_mask = 1;
 
@@ -1890,7 +1890,27 @@ int8_t AP_Mission::regenerate_airline()
     	num_insert ++;
 		insert_mask = insert_mask | (int8_t)(1U<<3);
     }
-	
+
+    for (uint16_t i = (uint16_t)_breakpoint.index.get(); i > 0 ;i --)
+    {
+        if (!read_cmd_from_storage(i - 1,cmd_cam_tigg_dist))
+        {
+            break;
+        }
+
+        if (cmd_cam_tigg_dist.id == MAV_CMD_DO_SET_CAM_TRIGG_DIST)
+        {
+            num_insert ++;
+            insert_mask = insert_mask | (int8_t)(1U<<4);
+            break;
+        }
+
+        if (cmd_cam_tigg_dist.id == MAV_CMD_NAV_WAYPOINT)
+        {
+            break;
+        }
+    }
+
     int16_t _cmd_total_temp = (_cmd_total + num_insert);
 	
     if (_cmd_total == 0 || _flags.state == MISSION_RUNNING)
@@ -1996,6 +2016,19 @@ int8_t AP_Mission::regenerate_airline()
 		{
 			clear();
 		}
+    }
+
+    if (cmd_cam_tigg_dist.id == MAV_CMD_DO_SET_CAM_TRIGG_DIST)
+    {
+        cmd_cam_tigg_dist.index = _breakpoint.index + offset;
+        if (write_cmd_to_storage(_breakpoint.index + offset,cmd_cam_tigg_dist) )
+        {
+            offset ++;
+        }
+        else
+        {
+            clear();
+        }
     }
 	
     _cmd_total.set_and_save_ifchanged(_cmd_total_temp);
