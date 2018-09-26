@@ -7,6 +7,7 @@
 
 
 
+
 #define PROXIMITY_Radar_GKXN_TIMEOUT_MS            300                               // requests timeout after 0.3 seconds
 
 class AP_Proximity_Radar_GKXN : public AP_Proximity_Backend
@@ -56,6 +57,7 @@ private:
 	uint8_t frame_longth=0x00;
 	uint16_t front_data_back=0;
 	uint16_t back_data_back=0;
+	uint16_t down_data_back=0;
 	uint8_t message_status=0;
 	uint16_t d1=0x00;
 	uint16_t d2=0x00;

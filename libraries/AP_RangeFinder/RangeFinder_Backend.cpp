@@ -114,4 +114,10 @@ RangeFinder::RangeFinder_Type AP_RangeFinder_Backend::type()
 		return (RangeFinder::RangeFinder_Type)state.type.get(); 
 }
 //	added end
+//added by xusiming in 20180827 and used for gkxn proximity radar
+void AP_RangeFinder_Backend::get_gxkn_down_data(uint16_t downdata,bool warning)
+{
+	gkxn_down_data=downdata;
+	gkxn_down_warning=warning;
+}
 

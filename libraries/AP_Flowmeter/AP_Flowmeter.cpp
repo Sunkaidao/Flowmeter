@@ -83,6 +83,7 @@ void AP_Flowmeter::init(const AP_SerialManager& serial_manager)
 		_Flo_data.volume=0;
 		_Flo_data.warning=0;
 		_Flo_data.mode=0;
+		_Flo_data.time=_time;
 		_Flo_data.packet_cnt = 0;
 		_Flo_data.flag=0;
   	 	 state_tim=0;
@@ -246,7 +247,7 @@ uint8_t AP_Flowmeter::get_warning()
 
 bool AP_Flowmeter::exhausted()
 {
-	static uint8_t lcl_cnt = 0;;
+	static uint8_t lcl_cnt = 0;
 
 	if(0 == _enabled)
 	{
@@ -258,20 +259,32 @@ bool AP_Flowmeter::exhausted()
 	{
 		return false;
 	}
-
-	
 	if(1 == _Flo_data.warning)
 	{
-		lcl_cnt ++;
-		if(lcl_cnt > (AP_FLOWMETER_EXHAUSTED_SHRESHOLD*_time))
-		{
-			lcl_cnt = 0;
-			return true;
+		if(sprayer_state==1)
+			{
+				lcl_cnt ++;
+				if(lcl_cnt > (AP_FLOWMETER_EXHAUSTED_SHRESHOLD*_time))
+				{
+				lcl_cnt = 0;
+				_Flo_data.time=0;
+				return true;
+				}
+				else
+				{
+					if(lcl_cnt%3==0)
+					{
+						if(_Flo_data.time<=0)
+							_Flo_data.time=0;
+						else _Flo_data.time=_time-(lcl_cnt/3);
+					}
+				}
 		}
 	}
 	else if(0 == _Flo_data.warning)
 	{
 		lcl_cnt = 0;
+		_Flo_data.time=_time;
 	}
 	else
 	{
@@ -319,4 +332,19 @@ uint16_t AP_Flowmeter::get_high()
 
 	return _Flo_data.high;
 }
+//added by xusiming in 20180821 and used for counting down
+void AP_Flowmeter::get_sprayer_state(uint8_t state)
+{
+	sprayer_state=state;
+}
+uint8_t AP_Flowmeter::get_time()
+{
+	if(0 == _enabled)
+				return 0;
+		
+	if(0 == _initialised)
+				return 0;
+	return _Flo_data.time;
+}
+//added end
 

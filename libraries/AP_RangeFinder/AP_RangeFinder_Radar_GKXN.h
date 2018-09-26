@@ -29,9 +29,10 @@ protected:
 private:
     // get a reading
     bool get_reading(uint16_t &reading_cm);
-	int Getdata();
     uint32_t last_reading_ms = 0;
     AP_HAL::UARTDriver *uart = nullptr;
+/*
+	int Getdata();
 	struct Time_radar_GKXN_error
 	{
 		uint8_t Time_Head_error;
@@ -51,5 +52,6 @@ private:
 	uint8_t message_status=0;
 	uint16_t d1=0x00;
 	uint16_t d2=0x00;
+	*/
 };
 

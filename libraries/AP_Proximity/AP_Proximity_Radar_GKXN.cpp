@@ -7,6 +7,7 @@
 #include "AP_Proximity_Backend.h"
 #include "AP_Proximity.h"
 #include "./../ArduCopter/Copter.h"
+#include <AP_RangeFinder/RangeFinder_Backend.h>
 
 
 
@@ -200,10 +201,12 @@ bool AP_Proximity_Radar_GKXN::read_sensor_data()
 			break;
 			case 7:
 				checksum+=data;
+				down_data_back=(data<<8);
 				message_state=8;
 			break;
 			case 8:
 				checksum+=data;
+				down_data_back+=data;
 				message_state=9;
 			break;
 			case 9:
@@ -234,6 +237,22 @@ bool AP_Proximity_Radar_GKXN::read_sensor_data()
 			break;
 			}
 		}
+	//send downward data to rangfinder and added by xusiming in 20180828
+	if(R3_warning==0)
+		{
+//make sure new instance has already been created
+		const RangeFinder *rngfnd = frontend.get_rangefinder();
+		if(rngfnd!=nullptr)
+			{
+			AP_RangeFinder_Backend *sensor = rngfnd->get_backend(0);
+			//check if the orientation is downward and make sure the type of rangefinder is gkxn
+			if(((sensor->orientation())==ROTATION_PITCH_270))
+				{
+				sensor->get_gxkn_down_data(down_data_back,R1_warning);
+				}
+			}
+		}
+	//added end 
 	if(valid==true)
 		{
 		update_sector_data(0, d1);
