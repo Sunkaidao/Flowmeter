@@ -179,6 +179,11 @@
 #endif
 //added end
 
+//sunkaidao added in 181024
+#include <AP_PPM/AP_PPM.h>
+//#include "AP_RangeFinder/AP_RangeFinder_PX4_PWM.h"
+
+//added end
 
 class Copter : public AP_HAL::HAL::Callbacks {
 public:
@@ -711,6 +716,11 @@ private:
 #endif
 	//	added end
 
+//sunkaidao added in 181024
+	AP_PPM PPM;
+	//AP_RangeFinder_PX4_PWM PX4_PWM;
+
+//added end
 
     // Parachute release
 #if PARACHUTE == ENABLED

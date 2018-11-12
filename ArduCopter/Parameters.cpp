@@ -1011,6 +1011,9 @@ const AP_Param::Info Copter::var_info[] = {
     GSCALAR(failsafe_gps_head, "FS_GPSH_ACTION", FS_GPS_HEAD_DISABLED),
 #endif
 
+//sunkaidao added in 181107
+	GOBJECT(PPM,"Flowmeter_", AP_PPM),
+
     AP_VAREND
 };
 

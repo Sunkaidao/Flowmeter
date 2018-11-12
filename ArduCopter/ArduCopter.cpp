@@ -798,7 +798,8 @@ void Copter::one_hz_loop()
 		gcs().send_text(MAV_SEVERITY_WARNING,"Warning: log numbers exceed max");
 	}
 #endif
-
+	//PX4_PWM.update();
+	PPM.update();
 }
 
 // called at 50hz

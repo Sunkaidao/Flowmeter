@@ -590,7 +590,6 @@ RangeFinder::RangeFinder(AP_SerialManager &_serial_manager, enum Rotation orient
 void RangeFinder::init(void)
 {
 //	printf("RangeFinder::init %d\n", num_instances);
-
     if (num_instances != 0) {
         // init called a 2nd time?
         return;
@@ -672,9 +671,7 @@ bool RangeFinder::_add_backend(AP_RangeFinder_Backend *backend)
 void RangeFinder::detect_instance(uint8_t instance)
 {
     enum RangeFinder_Type _type = (enum RangeFinder_Type)state[instance].type.get();
-
 //	printf("detect_instance %d\n", instance);
-	
     switch (_type) {
     case RangeFinder_TYPE_PLI2C:
     case RangeFinder_TYPE_PLI2CV3:

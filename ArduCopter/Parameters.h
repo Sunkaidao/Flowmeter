@@ -403,12 +403,16 @@ public:
         k_param_rf_abmode = 255,              //rf_abmode
         //added end
         #endif
+		//sunkaidao added in 181108
+		k_param_PPM = 256, 		  //COE
+		//added end
 
 		 #if NEWBROADCAST == ENABLED
 		 k_param_newbroadcast = 300,
 		 #endif
 
 		 k_param_failsafe_gps_head,
+	
 
         // the k_param_* space is 9-bits in size
         // 511: reserved
