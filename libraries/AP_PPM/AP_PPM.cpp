@@ -10,6 +10,8 @@
 #include <drivers/drv_hrt.h>
 #include <drivers/drv_sensor.h>
 #include <uORB/topics/pwm_input.h>
+#include <uORB/topics/pulse.h>
+
 #include <stdio.h>
 #include <errno.h>
 #include <cmath>
@@ -19,6 +21,9 @@
 extern "C" {
     int pwm_input_main(int, char **);
 };
+
+static int pulse_handle;
+
 
 const AP_Param::GroupInfo AP_PPM::var_info[] = {
 
@@ -72,6 +77,12 @@ void AP_PPM::init()
 		}
 		
 	ioctl(_fd, SENSORIOCSQUEUEDEPTH, 20);
+
+	pulse_handle= orb_subscribe(ORB_ID(flowmeter_pulse));
+	printf("orb_subscribe %d",pulse_handle);
+
+
+	
 //	close(_fd);
 
 	//_port = serial_manager.find_serial(AP_SerialManager::SerialProtocol_FlowMeter_GKXN, 0);
@@ -89,10 +100,21 @@ void AP_PPM::update()
 		init();
 		return;
 	}
+	bool updated;
+	struct _pulse_count_s rd;
+	orb_check(pulse_handle, &updated);
 
+	if(updated)
+	{
+		orb_copy(ORB_ID(flowmeter_pulse), pulse_handle, &rd);
+		printf("Random integer is now %d\n", rd.pulse_count);
+	}
+	else
+		printf("orb_check error\n");
 	//pulse_count_flag=_pulse_count;
 	//printf("%d\n",pulse_count_flag);
-
+	
+	/*
 	struct pwm_input_s pwm;
 	//printf("///%f///\n",_pulse_count);
 
@@ -102,15 +124,5 @@ void AP_PPM::update()
 		pulse_count_flag++;
 		printf("pulse_count_flag :%d\n",pulse_count_flag*_coefficient);
 	}
-	
-/*
-	_port->printf("\nperiod %d\n",pwm.period);
-	_port->printf("\npulse_width %d\n",pwm.pulse_width);
-	_port->printf("\ntimestamp %d\n",pulse_count);
-*/
-
-
-
-	//_port->printf("test");
-
+	*/
 }
