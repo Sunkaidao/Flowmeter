@@ -10,6 +10,8 @@
 #include <drivers/drv_hrt.h>
 #include <drivers/drv_sensor.h>
 #include <uORB/topics/pwm_input.h>
+#include <uORB/topics/pulse.h>
+
 #include <stdio.h>
 #include <errno.h>
 #include <cmath>
@@ -19,6 +21,9 @@
 extern "C" {
     int pwm_input_main(int, char **);
 };
+
+static int pulse_handle;
+
 
 const AP_Param::GroupInfo AP_PPM::var_info[] = {
 
@@ -56,6 +61,8 @@ AP_PPM::~AP_PPM()
 	   }
 
 }
+//extern ORB_DECLARE(flowmeter_pulse);
+
 
 void AP_PPM::init()
 {
@@ -66,12 +73,21 @@ void AP_PPM::init()
 	AP_BoardConfig::px4_start_driver(pwm_input_main, "pwm_input", "start");
 	_pwm_init_flag=1;
 
+	pulse_handle= orb_subscribe(ORB_ID(flowmeter_pulse));
+	printf("orb_subscribe %d\n\n",pulse_handle);
+
+
 	_fd = open(PWMIN0_DEVICE_PATH, O_RDONLY);
-		if (_fd != -1) {
-			return;
-		}
-		
-	ioctl(_fd, SENSORIOCSQUEUEDEPTH, 20);
+	if (_fd == -1) {
+		printf("open error \n");
+		return;
+	}
+	if (ioctl(_fd, SENSORIOCSQUEUEDEPTH, 20) != 0)
+	{
+		printf("ioctl error \n");
+		return;
+	}
+	//ioctl(_fd, SENSORIOCSQUEUEDEPTH, 20);
 //	close(_fd);
 
 	//_port = serial_manager.find_serial(AP_SerialManager::SerialProtocol_FlowMeter_GKXN, 0);
@@ -89,9 +105,37 @@ void AP_PPM::update()
 		init();
 		return;
 	}
+/*
+	if (_fd == -1) {
+		_fd = open(PWMIN0_DEVICE_PATH, O_RDONLY);
+		ioctl(_fd, SENSORIOCSQUEUEDEPTH, 20);
+		return;
+	}
+*/
+	
+	if(orb_exists(ORB_ID(flowmeter_pulse),0)==OK)
+		printf("orb_exists OK\n");
 
+	if(pulse_handle<0)
+	{
+		pulse_handle= orb_subscribe(ORB_ID(flowmeter_pulse));
+		printf("orb_subscribe %d\n",pulse_handle);
+	}
+
+	bool updated;
+	struct _pulse_count_s rd;
+	orb_check(pulse_handle, &updated);
+
+	if(updated)
+	{
+		orb_copy(ORB_ID(flowmeter_pulse), pulse_handle, &rd);
+		printf("Random integer is now %d\n", rd.pulse_count);
+	}
+	else
+		printf("orb_check error\n");
 	//pulse_count_flag=_pulse_count;
 	//printf("%d\n",pulse_count_flag);
+	
 
 	struct pwm_input_s pwm;
 	//printf("///%f///\n",_pulse_count);
@@ -102,15 +146,5 @@ void AP_PPM::update()
 		pulse_count_flag++;
 		printf("pulse_count_flag :%d\n",pulse_count_flag*_coefficient);
 	}
-	
-/*
-	_port->printf("\nperiod %d\n",pwm.period);
-	_port->printf("\npulse_width %d\n",pwm.pulse_width);
-	_port->printf("\ntimestamp %d\n",pulse_count);
-*/
-
-
-
-	//_port->printf("test");
 
 }
