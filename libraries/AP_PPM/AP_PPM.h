@@ -22,11 +22,11 @@ protected:
 
 private:
 	int _fd;
-	uint8_t pulse_count_flag;
-	uint32_t _period;
-	uint32_t _pulse_width;
-	bool _pwm_init_flag;
 
+	uint32_t	_flowmeter_flag;
+	uint32_t	_flow_s_count;
+	uint32_t	_flow_total;
+	uint32_t	_flow_s;
 	AP_Float         _coefficient;//coefficient
 
 };
