@@ -800,6 +800,8 @@ void Copter::one_hz_loop()
 #endif
 	//PX4_PWM.update();
 	PPM.update();
+	//flowmeter.update(serial_manager);
+
 }
 
 // called at 50hz

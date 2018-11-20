@@ -1012,7 +1012,7 @@ const AP_Param::Info Copter::var_info[] = {
 #endif
 
 //sunkaidao added in 181107
-	GOBJECT(PPM,"Flowmeter_", AP_PPM),
+	GOBJECT(PPM,"FL_Me_", AP_PPM),
 
     AP_VAREND
 };

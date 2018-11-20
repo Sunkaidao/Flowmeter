@@ -25,6 +25,7 @@ extern "C" {
 static int pulse_handle;
 
 
+
 const AP_Param::GroupInfo AP_PPM::var_info[] = {
 
 // @Param: ENABLE
@@ -32,7 +33,9 @@ const AP_Param::GroupInfo AP_PPM::var_info[] = {
     // @Description: Allows you to enable (1) or disable (0) the flowmeter
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-    AP_GROUPINFO("COE",      0,  AP_PPM, _coefficient, 0),
+    AP_GROUPINFO("COE_A",      0,  AP_PPM, _coefficient_a, 0),
+	AP_GROUPINFO("COE_B",	   1,  AP_PPM, _coefficient_b, 0),
+
      AP_GROUPEND
 };
 
@@ -40,21 +43,6 @@ const AP_Param::GroupInfo AP_PPM::var_info[] = {
 AP_PPM::AP_PPM()
 {
 	_initialised = false;
-	_coefficient=1;
-	_flow_s_count=0;
-	_flow_total=0;
-	_flow_s=0;
-
-
-	//if(
-		//!= 0)
-	//	{
-			
-			//_port->printf("\nerror");
-			//return;
-	//	}
-//
-
 
 }
 AP_PPM::~AP_PPM()
@@ -69,6 +57,13 @@ AP_PPM::~AP_PPM()
 
 void AP_PPM::init()
 {
+	_coefficient_a=2;
+	_coefficient_b=0;
+	_flow_s_count=0;
+	_flow_total=0;
+	_flow_s=0;
+	_flow_test=0;
+
 	AP_BoardConfig::px4_start_driver(pwm_input_main, "pwm_input", "start");
 
 	pulse_handle= orb_subscribe(ORB_ID(flowmeter_pulse));
@@ -114,27 +109,27 @@ void AP_PPM::update()
 		bool updated;
 		struct _pulse_count_s rd;
 		orb_check(pulse_handle, &updated);
-
 		if(updated)
 		{
 			orb_copy(ORB_ID(flowmeter_pulse), pulse_handle, &rd);
 			printf("Random integer is now %d\n", rd.pulse_count);
 			_flow_s_count=rd.pulse_count-_flowmeter_flag;
 			_flowmeter_flag= rd.pulse_count;
-			_flow_total=rd.pulse_count*500*23*_coefficient/6;//10000*  q pulse count
-			_flow_s=_flow_s_count*23*_coefficient/12;//10000*  q frequency  L/s
+			_flow_total=rd.pulse_count*500*23*_coefficient_a/6+_coefficient_b;//10000*  q pulse count
+			_flow_s=_flow_s_count*500*23*_coefficient_a/6+_coefficient_b;//10000*  q frequency  L/s
+			_flow_test=500*_flowmeter_flag*_coefficient_a+_coefficient_b;//ml
 		}
 		else
 		{
 			_flow_s_count=0;
-			_flow_s=0;
-
+			_flow_s=_coefficient_b;
+			_flow_test=500*_flowmeter_flag*_coefficient_a+_coefficient_b;//ml
 		}
 	}
 	printf("_flow_s_count is %d\n", _flow_s_count);
 	printf("_flow_total is %d\n", _flow_total);
 	printf("_flow_s is %d\n", _flow_s);
-	
+	printf("_flow_test is %d\n\n", _flow_test);
 
 /*
 	struct pwm_input_s pwm;

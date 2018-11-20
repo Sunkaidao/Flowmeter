@@ -16,18 +16,23 @@ public:
 
 
 protected:
-	AP_HAL::UARTDriver *_port;
 	
 	bool _initialised;
 
 private:
+	
+
 	int _fd;
 
 	uint32_t	_flowmeter_flag;
 	uint32_t	_flow_s_count;
 	uint32_t	_flow_total;
 	uint32_t	_flow_s;
-	AP_Float         _coefficient;//coefficient
+	uint32_t	_flow_test;
+
+	AP_Float        _coefficient_a;//coefficient
+	AP_Float		_coefficient_b;
+
 
 };
 
