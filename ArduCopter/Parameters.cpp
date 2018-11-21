@@ -1010,10 +1010,10 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Standard
     GSCALAR(failsafe_gps_head, "FS_GPSH_ACTION", FS_GPS_HEAD_DISABLED),
 #endif
-
+#if FLOWMETER_WL == ENABLED
 //sunkaidao added in 181107
-	GOBJECT(PPM,"FL_Me_", AP_PPM),
-
+	GOBJECT(Flowmeter_wl,"FL_Me_", AP_Flowmeter_WL),
+#endif
     AP_VAREND
 };
 

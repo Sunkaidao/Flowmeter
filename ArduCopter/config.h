@@ -354,7 +354,10 @@
  # define FLOWMETER  ENABLED
 #endif
 #endif
-
+//sunkaidao added in 181121
+#ifndef FLOWMETER_WL
+ # define FLOWMETER_WL  ENABLED
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -5,11 +5,11 @@
 #include <AP_Math/AP_Math.h>
 #include <AP_HAL/AP_HAL.h>
 
-class AP_PPM
+class AP_Flowmeter_WL
 {
 public:
-	AP_PPM();
-	~AP_PPM();
+	AP_Flowmeter_WL();
+	~AP_Flowmeter_WL();
 	void init();
 	void update();
 	static const struct AP_Param::GroupInfo var_info[];

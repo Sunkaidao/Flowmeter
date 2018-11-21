@@ -371,14 +371,18 @@ void Copter::send_payload_status(mavlink_channel_t chan, enum pld_status para_pl
 #if ((PROJECTGKXN == ENABLED)&&(FLOWMETER==ENABLED))
 //sunkaidao change in 181121
 {
-				payload_status[0] = 1;
-				payload_status[1] = 1;
-				payload_status[2] = (PPM.get_flow_test()&0xff);
-				payload_status[3] = ((PPM.get_flow_test()>>8)&0xff);
-				payload_status[4] = ((PPM.get_flow_test()>>16)&0xff);
-				payload_status[5] = ((PPM.get_flow_test()>>24)&0xff);
-				payload_status[6] = 1;
-				payload_status[7] = 0;
+				payload_status[0] = 10;
+				payload_status[1] = 2;
+				payload_status[2] =	3;
+					//(Flowmeter_wl.get_flow_test()&0xff);
+				payload_status[3] =	4;
+					//((Flowmeter_wl.get_flow_test()>>8)&0xff);
+				payload_status[4] =	5;
+					//((Flowmeter_wl.get_flow_test()>>16)&0xff);
+				payload_status[5] =	6;
+					//((Flowmeter_wl.get_flow_test()>>24)&0xff);
+				payload_status[6] = 7;
+				payload_status[7] = 8;
 				mavlink_msg_payload_status_send(chan, \
 																AP_HAL::millis(), \
 																payload_type, \

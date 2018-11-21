@@ -1,6 +1,6 @@
 #include <AP_BoardConfig/AP_BoardConfig.h>
 
-#include <AP_PPM/AP_PPM.h>
+#include <AP_Flowmeter_WL/AP_Flowmeter_WL.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -26,26 +26,26 @@ static int pulse_handle;
 
 
 
-const AP_Param::GroupInfo AP_PPM::var_info[] = {
+const AP_Param::GroupInfo AP_Flowmeter_WL::var_info[] = {
 
 // @Param: ENABLE
     // @DisplayName: Sprayer enable/disable
     // @Description: Allows you to enable (1) or disable (0) the flowmeter
     // @Values: 0:Disabled,1:Enabled
     // @User: Standard
-    AP_GROUPINFO("COE_A",      0,  AP_PPM, _coefficient_a, 0),
-	AP_GROUPINFO("COE_B",	   1,  AP_PPM, _coefficient_b, 0),
+    AP_GROUPINFO("COE_A",      0,  AP_Flowmeter_WL, _coefficient_a, 1),
+	AP_GROUPINFO("COE_B",	   1,  AP_Flowmeter_WL, _coefficient_b, 0),
 
      AP_GROUPEND
 };
 
 
-AP_PPM::AP_PPM()
+AP_Flowmeter_WL::AP_Flowmeter_WL()
 {
 	_initialised = false;
 
 }
-AP_PPM::~AP_PPM()
+AP_Flowmeter_WL::~AP_Flowmeter_WL()
 {
 	if (_fd != -1) {
 		   //close(_fd);
@@ -55,10 +55,10 @@ AP_PPM::~AP_PPM()
 //extern ORB_DECLARE(flowmeter_pulse);
 
 
-void AP_PPM::init()
+void AP_Flowmeter_WL::init()
 {
-	_coefficient_a=1;
-	_coefficient_b=0;
+	//_coefficient_a=1;
+	//_coefficient_b=0;
 	_flow_s_count=0;
 	_flow_total=0;
 	_flow_s=0;
@@ -88,7 +88,7 @@ void AP_PPM::init()
 
 }
 
-void AP_PPM::update()
+void AP_Flowmeter_WL::update()
 {
 
 	if(!_initialised)
@@ -121,7 +121,7 @@ void AP_PPM::update()
 		else
 		{
 			_flow_s_count=0;
-			_flow_s=_coefficient_b;
+			_flow_s=_coefficient_b*1000;
 			_flow_test=(_flowmeter_flag*_coefficient_a+_coefficient_b)*1000;//ml
 		}
 	}
@@ -143,7 +143,7 @@ void AP_PPM::update()
 	}
 */
 }
-uint32_t AP_PPM::get_flow_test()
+uint32_t AP_Flowmeter_WL::get_flow_test()
 {
 	return _flow_test;
 }

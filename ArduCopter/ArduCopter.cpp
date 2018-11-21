@@ -799,8 +799,10 @@ void Copter::one_hz_loop()
 	}
 #endif
 	//PX4_PWM.update();
-	PPM.update();
-	//flowmeter.update(serial_manager);
+	//PPM.update();
+	#if FLOWMETER_WL == ENABLED
+	Flowmeter_wl.update();
+	#endif
 
 }
 
