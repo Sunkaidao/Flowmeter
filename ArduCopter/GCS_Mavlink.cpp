@@ -369,7 +369,31 @@ void Copter::send_payload_status(mavlink_channel_t chan, enum pld_status para_pl
 		case MSG_PLD_STATUS_FLOWMETER:
 
 #if ((PROJECTGKXN == ENABLED)&&(FLOWMETER==ENABLED))
+//sunkaidao change in 181121
+{
+				payload_status[0] = 1;
+				payload_status[1] = 1;
+				payload_status[2] = (PPM.get_flow_test()&0xff);
+				payload_status[3] = ((PPM.get_flow_test()>>8)&0xff);
+				payload_status[4] = ((PPM.get_flow_test()>>16)&0xff);
+				payload_status[5] = ((PPM.get_flow_test()>>24)&0xff);
+				payload_status[6] = 1;
+				payload_status[7] = 0;
+				mavlink_msg_payload_status_send(chan, \
+																AP_HAL::millis(), \
+																payload_type, \
+																payload_status[0], \
+																payload_status[1], \
+																payload_status[2], \
+																payload_status[3], \
+																payload_status[4], \
+																payload_status[5], \
+																payload_status[6], \
+																payload_status[7]);
+							
 
+}
+/*
 			if(true == flowmeter.enabled())
 			{
 				//printf("chan %d, %.8d MSG_PLD_STATUS_FLOWMETER\n", chan, AP_HAL::millis());
@@ -394,7 +418,7 @@ void Copter::send_payload_status(mavlink_channel_t chan, enum pld_status para_pl
 												payload_status[5], \
 												payload_status[6], \
 												payload_status[7]);
-			}
+			}*/
 #endif
 			break;
 				

@@ -57,7 +57,7 @@ AP_PPM::~AP_PPM()
 
 void AP_PPM::init()
 {
-	_coefficient_a=2;
+	_coefficient_a=1;
 	_coefficient_b=0;
 	_flow_s_count=0;
 	_flow_total=0;
@@ -112,23 +112,23 @@ void AP_PPM::update()
 		if(updated)
 		{
 			orb_copy(ORB_ID(flowmeter_pulse), pulse_handle, &rd);
-			printf("Random integer is now %d\n", rd.pulse_count);
 			_flow_s_count=rd.pulse_count-_flowmeter_flag;
 			_flowmeter_flag= rd.pulse_count;
-			_flow_total=rd.pulse_count*500*23*_coefficient_a/6+_coefficient_b;//10000*  q pulse count
-			_flow_s=_flow_s_count*500*23*_coefficient_a/6+_coefficient_b;//10000*  q frequency  L/s
-			_flow_test=500*_flowmeter_flag*_coefficient_a+_coefficient_b;//ml
+			//_flow_total=(rd.pulse_count*_coefficient_a+_coefficient_b)*1000;//10000*  q pulse count
+			_flow_s=(_flow_s_count*_coefficient_a+_coefficient_b)*1000;//10000*  q frequency  L/s
+			_flow_test=(_flowmeter_flag*_coefficient_a+_coefficient_b)*1000;//ml
 		}
 		else
 		{
 			_flow_s_count=0;
 			_flow_s=_coefficient_b;
-			_flow_test=500*_flowmeter_flag*_coefficient_a+_coefficient_b;//ml
+			_flow_test=(_flowmeter_flag*_coefficient_a+_coefficient_b)*1000;//ml
 		}
 	}
+	printf("Random integer is %d\n", _flowmeter_flag);
 	printf("_flow_s_count is %d\n", _flow_s_count);
-	printf("_flow_total is %d\n", _flow_total);
-	printf("_flow_s is %d\n", _flow_s);
+	//printf("_flow_total is %d\n", _flow_total);
+	printf("_flow_s_test is %d\n", _flow_s);
 	printf("_flow_test is %d\n\n", _flow_test);
 
 /*
@@ -143,3 +143,9 @@ void AP_PPM::update()
 	}
 */
 }
+uint32_t AP_PPM::get_flow_test()
+{
+	return _flow_test;
+}
+
+

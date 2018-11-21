@@ -13,6 +13,7 @@ public:
 	void init();
 	void update();
 	static const struct AP_Param::GroupInfo var_info[];
+	uint32_t get_flow_test();
 
 
 protected:
