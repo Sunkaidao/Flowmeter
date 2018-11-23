@@ -12,16 +12,20 @@ public:
 	~AP_Flowmeter_WL();
 	void init();
 	void update();
-	static const struct AP_Param::GroupInfo var_info[];
 	uint32_t get_flow_test();
+	static const struct AP_Param::GroupInfo var_info[];
 
 
 protected:
-	
-	bool _initialised;
 
 private:
+
 	
+	AP_Float        _coefficient_a;//coefficient
+	AP_Float		_coefficient_b;
+	AP_Int16		_dose;
+	AP_Int16		_Total_dose;
+	bool _initialised;
 
 	int _fd;
 
@@ -31,8 +35,6 @@ private:
 	uint32_t	_flow_s;
 	uint32_t	_flow_test;
 
-	AP_Float        _coefficient_a;//coefficient
-	AP_Float		_coefficient_b;
 
 
 };

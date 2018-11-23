@@ -367,10 +367,9 @@ void Copter::send_payload_status(mavlink_channel_t chan, enum pld_status para_pl
 	{
 	
 		case MSG_PLD_STATUS_FLOWMETER:
-
-#if ((PROJECTGKXN == ENABLED)&&(FLOWMETER==ENABLED))
 //sunkaidao change in 181121
-{
+#if FLOWMETER_WL==ENABLED
+			{
 				payload_status[0] = 10;
 				payload_status[1] = 2;
 				payload_status[2] =	3;
@@ -394,10 +393,11 @@ void Copter::send_payload_status(mavlink_channel_t chan, enum pld_status para_pl
 																payload_status[5], \
 																payload_status[6], \
 																payload_status[7]);
-							
-
-}
+			}
+#endif
 /*
+#if ((PROJECTGKXN == ENABLED)&&(FLOWMETER==ENABLED))
+
 			if(true == flowmeter.enabled())
 			{
 				//printf("chan %d, %.8d MSG_PLD_STATUS_FLOWMETER\n", chan, AP_HAL::millis());
@@ -422,8 +422,8 @@ void Copter::send_payload_status(mavlink_channel_t chan, enum pld_status para_pl
 												payload_status[5], \
 												payload_status[6], \
 												payload_status[7]);
-			}*/
-#endif
+			}
+#endif*/
 			break;
 				
 		case MSG_PLD_STATUS_SPRAYER:

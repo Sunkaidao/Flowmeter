@@ -35,6 +35,9 @@ const AP_Param::GroupInfo AP_Flowmeter_WL::var_info[] = {
     // @User: Standard
     AP_GROUPINFO("COE_A",      0,  AP_Flowmeter_WL, _coefficient_a, 1),
 	AP_GROUPINFO("COE_B",	   1,  AP_Flowmeter_WL, _coefficient_b, 0),
+	AP_GROUPINFO("_DOSE",	   2,  AP_Flowmeter_WL, _dose, 0),
+	AP_GROUPINFO("_TO_DOSE",	   3,  AP_Flowmeter_WL, _Total_dose, 0),
+
 
      AP_GROUPEND
 };
@@ -64,6 +67,8 @@ void AP_Flowmeter_WL::init()
 	_flow_s=0;
 	_flow_test=0;
 
+
+
 	AP_BoardConfig::px4_start_driver(pwm_input_main, "pwm_input", "start");
 
 	pulse_handle= orb_subscribe(ORB_ID(flowmeter_pulse));
@@ -85,7 +90,6 @@ void AP_Flowmeter_WL::init()
 
 	//_port = serial_manager.find_serial(AP_SerialManager::SerialProtocol_FlowMeter_GKXN, 0);
 		_initialised = true;	
-
 }
 
 void AP_Flowmeter_WL::update()
@@ -98,7 +102,7 @@ void AP_Flowmeter_WL::update()
 		init();
 		return;
 	}
-	
+
 	if(orb_exists(ORB_ID(flowmeter_pulse),0)==OK)
 	{
 		if(pulse_handle<0)
@@ -130,6 +134,8 @@ void AP_Flowmeter_WL::update()
 	//printf("_flow_total is %d\n", _flow_total);
 	printf("_flow_s_test is %d\n", _flow_s);
 	printf("_flow_test is %d\n\n", _flow_test);
+	printf("_dose is %d\n", _dose);
+	printf("_Total_dose is %d\n\n", _Total_dose);
 
 /*
 	struct pwm_input_s pwm;
