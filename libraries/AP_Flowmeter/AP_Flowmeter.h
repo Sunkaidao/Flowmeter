@@ -50,10 +50,6 @@ public:
 
 	static const struct AP_Param::GroupInfo var_info[];
 
-//added by sunkaidoa in 20181023
-	//static int irq_handler0(int irq, void *context);//irq
-	//static void irq_handler(uint8_t instance);
-//added end
 protected:
 	AP_HAL::UARTDriver *_port;
 	
@@ -71,11 +67,6 @@ private:
 	//added end
 	uint8_t Tx_Buff[4];
 	uint8_t Rx_Buff[11];
-
-	//added by sunkaidao in 181023
-	//uint32_t gpio;
-	//uint32_t  _pulse_count;//pilse count
-	//added end
 
 	struct Flowmeter_data
 	{

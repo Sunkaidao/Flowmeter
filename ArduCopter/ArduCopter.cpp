@@ -801,7 +801,16 @@ void Copter::one_hz_loop()
 	//PX4_PWM.update();
 	//PPM.update();
 	#if FLOWMETER_WL == ENABLED
-	Flowmeter_wl.update();
+	if(Flowmeter_wl.update(sprayer.get_spraying())==1)
+		{
+			printf("MODE_REASON_RTL_LAST 1\n");
+			copter.set_mode(RTL,MODE_REASON_RTL_LAST);
+		}
+	else
+		{
+
+		}
+		//printf("MODE_REASON_RTL_LAST 0\n");
 	#endif
 
 }

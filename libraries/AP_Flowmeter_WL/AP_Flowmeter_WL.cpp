@@ -1,5 +1,7 @@
 #include <AP_BoardConfig/AP_BoardConfig.h>
 
+#include <AC_Sprayer/AC_Sprayer.h>
+
 #include <AP_Flowmeter_WL/AP_Flowmeter_WL.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -35,7 +37,7 @@ const AP_Param::GroupInfo AP_Flowmeter_WL::var_info[] = {
     // @User: Standard
     AP_GROUPINFO("COE_A",      0,  AP_Flowmeter_WL, _coefficient_a, 1),
 	AP_GROUPINFO("COE_B",	   1,  AP_Flowmeter_WL, _coefficient_b, 0),
-	AP_GROUPINFO("_DOSE",	   2,  AP_Flowmeter_WL, _dose, 0),
+	//AP_GROUPINFO("_DOSE",	   2,  AP_Flowmeter_WL, _dose, 0),
 	AP_GROUPINFO("_TO_DOSE",	   3,  AP_Flowmeter_WL, _Total_dose, 0),
 
 
@@ -51,21 +53,24 @@ AP_Flowmeter_WL::AP_Flowmeter_WL()
 AP_Flowmeter_WL::~AP_Flowmeter_WL()
 {
 	if (_fd != -1) {
-		   //close(_fd);
+		   
 	   }
 
 }
-//extern ORB_DECLARE(flowmeter_pulse);
+
 
 
 void AP_Flowmeter_WL::init()
 {
-	//_coefficient_a=1;
-	//_coefficient_b=0;
-	_flow_s_count=0;
-	_flow_total=0;
-	_flow_s=0;
-	_flow_test=0;
+	flowmeter_wl.delay=0;
+
+	flowmeter_wl._flow_s_count=0;
+	flowmeter_wl._flow_s=0;
+	flowmeter_wl._flow_test=0;
+	flowmeter_wl._remaining_flow=0;
+	flowmeter_wl._status=1;
+	flowmeter_wl._rtf_flag=1;
+	
 
 
 
@@ -92,7 +97,7 @@ void AP_Flowmeter_WL::init()
 		_initialised = true;	
 }
 
-void AP_Flowmeter_WL::update()
+uint8_t AP_Flowmeter_WL::update(uint8_t spraying)
 {
 
 	if(!_initialised)
@@ -100,58 +105,88 @@ void AP_Flowmeter_WL::update()
 		
 		//printf("///%f///\n",_coefficient);
 		init();
-		return;
+		printf("return 2\n");
+		return 2;
 	}
-
-	if(orb_exists(ORB_ID(flowmeter_pulse),0)==OK)
+	
+	if(spraying==1)
 	{
-		if(pulse_handle<0)
-		{
-			pulse_handle= orb_subscribe(ORB_ID(flowmeter_pulse));
-		}
 
-		bool updated;
-		struct _pulse_count_s rd;
-		orb_check(pulse_handle, &updated);
-		if(updated)
+		if(orb_exists(ORB_ID(flowmeter_pulse),0)==OK)
 		{
-			orb_copy(ORB_ID(flowmeter_pulse), pulse_handle, &rd);
-			_flow_s_count=rd.pulse_count-_flowmeter_flag;
-			_flowmeter_flag= rd.pulse_count;
-			//_flow_total=(rd.pulse_count*_coefficient_a+_coefficient_b)*1000;//10000*  q pulse count
-			_flow_s=(_flow_s_count*_coefficient_a+_coefficient_b)*1000;//10000*  q frequency  L/s
-			_flow_test=(_flowmeter_flag*_coefficient_a+_coefficient_b)*1000;//ml
-		}
-		else
-		{
-			_flow_s_count=0;
-			_flow_s=_coefficient_b*1000;
-			_flow_test=(_flowmeter_flag*_coefficient_a+_coefficient_b)*1000;//ml
+			if(pulse_handle<0)
+			{
+				pulse_handle= orb_subscribe(ORB_ID(flowmeter_pulse));
+			}
+
+			bool updated;
+			struct _pulse_count_s rd;
+			orb_check(pulse_handle, &updated);
+			if(updated)
+			{
+				orb_copy(ORB_ID(flowmeter_pulse), pulse_handle, &rd);
+				flowmeter_wl._flow_s_count=rd.pulse_count-flowmeter_wl._flowmeter_flag;
+				flowmeter_wl._flowmeter_flag= rd.pulse_count;
+				flowmeter_wl._flow_s=(flowmeter_wl._flow_s_count*_coefficient_a+_coefficient_b);//10000*  q frequency  L/s
+				flowmeter_wl._flow_test=(flowmeter_wl._flowmeter_flag*_coefficient_a+_coefficient_b);//ml
+				flowmeter_wl._status=0;
+			}
+			else
+			{
+				
+				flowmeter_wl._flow_s_count=0;
+				flowmeter_wl._flow_s=_coefficient_b;
+				flowmeter_wl._flow_test=(flowmeter_wl._flowmeter_flag*_coefficient_a+_coefficient_b);//ml
+			
+				flowmeter_wl._status=1;
+				//return 0;
+				
+			}
 		}
 	}
-	printf("Random integer is %d\n", _flowmeter_flag);
-	printf("_flow_s_count is %d\n", _flow_s_count);
-	//printf("_flow_total is %d\n", _flow_total);
-	printf("_flow_s_test is %d\n", _flow_s);
-	printf("_flow_test is %d\n\n", _flow_test);
-	printf("_dose is %d\n", _dose);
-	printf("_Total_dose is %d\n\n", _Total_dose);
-
-/*
-	struct pwm_input_s pwm;
-	//printf("///%f///\n",_pulse_count);
-
-	//printf("\\%d\\\n",sizeof(pwm));
-	while (::read(_fd, &pwm, sizeof(pwm)) == sizeof(pwm))
+	else
 	{
-		pulse_count_flag++;
-		printf("pulse_count_flag :%d\n",pulse_count_flag*_coefficient);
+		flowmeter_wl._status=0;
+		//return 1;
 	}
-*/
+	
+	//remaining
+	
+	flowmeter_wl._remaining_flow=_Total_dose*1000-flowmeter_wl._flow_test;
+	printf("Random integer is %d\n", flowmeter_wl._flowmeter_flag);
+	printf("_flow_s_count is %d\n", flowmeter_wl._flow_s_count);
+	printf("_flow_s_test is %d\n", flowmeter_wl._flow_s);
+	printf("_flow_test is %d\n\n", flowmeter_wl._flow_test);
+	printf("_Total_dose is %d\n", _Total_dose);
+	printf("_remaining_flow is %d\n\n", flowmeter_wl._remaining_flow);	
+	printf("status is :%d\n",flowmeter_wl._status);
+	printf("_rtf_flag is :%d\n",flowmeter_wl._rtf_flag);
+	
+	if(flowmeter_wl._status>flowmeter_wl._rtf_flag)
+	{
+		
+		printf("delay is :%d\n",flowmeter_wl.delay++);
+		if(flowmeter_wl.delay>5)
+		{
+			flowmeter_wl._rtf_flag=flowmeter_wl._status;
+			printf("return 1\n");
+			flowmeter_wl.delay=0;
+			return 1;
+		}
+	}
+
+	else
+	{
+		flowmeter_wl._rtf_flag=flowmeter_wl._status;
+		//printf("return 0\n");
+		//return 0;
+	}
+	printf("delay is :%d\n",flowmeter_wl.delay);
+	return 0;
 }
 uint32_t AP_Flowmeter_WL::get_flow_test()
 {
-	return _flow_test;
+	return flowmeter_wl._flow_test;
 }
 
 

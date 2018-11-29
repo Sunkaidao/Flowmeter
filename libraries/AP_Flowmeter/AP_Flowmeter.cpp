@@ -1,14 +1,6 @@
 #include <AP_Flowmeter/AP_Flowmeter.h>
 //#include <AP_HAL.h>
-//#include <Pwm_input>
-//.\..\module\px4firmware\src\drivers
-/*
-#include <AP_BoardConfig/AP_BoardConfig.h>
-#include <board_config.h>
-#include <stdio.h>
-*/
 
-//PWMIN pwmin;
 
 
 extern const AP_HAL::HAL& hal;
@@ -58,12 +50,7 @@ AP_Flowmeter::AP_Flowmeter()
 	_initialised = false;
 	
 	AP_Param::setup_object_defaults(this, var_info);
-/*
-//sunkaidao added in 181023
-	gpio=GPIO_GPIO0_INPUT;
-	stm32_gpiosetevent(gpio, true, false, false, irq_handler0);
-//added end 
-*/
+
 //	printf("0.%d", _initialised);
 	
 }
@@ -112,19 +99,7 @@ void AP_Flowmeter::init(const AP_SerialManager& serial_manager)
 
 //	printf("1.%d\n", _initialised);
 }
-/*
-//sunkaidao added in 181024
-int AP_Flowmeter::irq_handler0(int irq, void *context)
-{
-	irq_handler(0);
-	return 0;
-}
 
-void AP_Flowmeter::irq_handler(uint8_t instance)
-{
-	_pulse_count++;
-}
-*/
 
 
 void AP_Flowmeter::SendCMD(uint8_t CMD)
@@ -246,16 +221,8 @@ void AP_Flowmeter::update(const AP_SerialManager& serial_manager)
 	if(!_initialised)
 		return;
 //	hal.uartD->printf("the pulse count:\n");
-/*
-	int _fd = open(PWMIN0_DEVICE_PATH, O_RDONLY);
-	struct pwm_input_s pwm;
-	while (::read(_fd, &pwm, sizeof(pwm)) == sizeof(pwm)){
-
-	}
-*/
 
 
-/*
 	get_Flowmeter_data();
 
 //	if(state_tim%100==0)
@@ -267,7 +234,7 @@ void AP_Flowmeter::update(const AP_SerialManager& serial_manager)
 //	}
 //	printf("_Flo_data.warning=%d\n",_Flo_data.warning);
 //	state_tim++;
-*/
+
 }
 
 
